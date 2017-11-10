@@ -1,0 +1,36 @@
+Ufit : determiner pourquoi LLC est différent de LCL
+
+ShFit : pour identifier les gerbes
+
+implementer une recherche des extrémités pour les glines
+on énumère les points les plus lointains de la ref en ordre décroissant. Pour chaque on regarde la colinéaritéavec le vecteur directeur. On choisi le plus lointain colinéaire et le plus lointain anti-colinéaire.
+
+si un point de croisement est l'extrémité d'une ligne, on considère qu'il y a branchement
+on coupe la droite porteuse en deux si le croisement n'est pas une de ses extrémités et on refait tourner l'EM.
+On détermine la droite mère comme une bissectrice en 2D. en 3D???
+
+Pfit : derive de mfit, en 3d permet de fitter des droites et des spirales (particules neutres et chargées)
+
+Projection orthogonale
+on veut projecter un nuage de points sur un plan orthogonal à un vecteur D
+Soit D le vecteur projectif Soit R un point quelconque du plan 
+1) Former un repère orthonormal pour le plan de projection
+   11) trouver deux vecteurs U et V tq D,U,V forment une base orthonormale par le procédé d'orthogonalisation de Gram-Schmidt
+   12) orthonormer le repère avec la norme de D
+2) Pour chaque point P
+   21) calculer le vecteur PR(a,b,c)
+   22) changer de base pour D,U,V -> PR(d,u,v)
+   23) la projection de P est P+d*D
+
+une droite est considérée comme convergée si sa distribution est fine (droite)
+ou si sa projection est un cercle à distribution fine (spirale)
+
+On prend alors chaque point et on calcule l'angle en fonction de la longueur longitudinale par rapport à la référence
+
+ex :
+point 1 dist 10 angle 30 -> 3°/u
+point 2 dist 19 angle 60 -> 3.16°/u
+point 3 dist 31 angle 90 -> 2.90°/u
+on fait une moyenne pondérée par le coef de chaque point
+ca donne la vitesse de ~3° par unité longitudinale
+cela donne une réprésentation de la spirale
