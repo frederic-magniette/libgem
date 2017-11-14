@@ -48,7 +48,7 @@ int add_object_gem(struct gem_ws *ws,enum otype type,struct graphics *gws) {
   double *dist_to_ref=malloc(sizeof(double)*ws->ds->nb_points);
   int newo_idx=ws->nb_objects;
   struct neighbouring *wfn;
-  double pc_out=0.001; //weight for excluded objects : to avoid 0 
+  double pc_out=0.000001; //weight for excluded objects : to avoid 0 
   int obj_type;
   int dsindex;
   ws->nb_objects++;
@@ -111,7 +111,7 @@ int add_object_gem(struct gem_ws *ws,enum otype type,struct graphics *gws) {
       printf("removing point %d from object %d\n",wf,l);
     }
     if (gws) {
-      plot_point(ws->ds->points[wf],newo_idx,gws);
+      plot_point(ws->ds->points[wf],newo_idx+1,gws);
     }
 
     printf("choosing with respect to scale/2=%f\n",ws->scale/2);
@@ -121,9 +121,8 @@ int add_object_gem(struct gem_ws *ws,enum otype type,struct graphics *gws) {
       dsindex=wfn->neighbours[p]->ds_index;
       //choose the point not too far from wfp
       //TODO : should be a parameter
-      if (wfn->neighbours[p]->dist<ws->scale/2) {
-        //if (wfn->neighbours[p]->dist<dist_to_ref[wf]) {
-        //printf("choosen point %d\n",dsindex);
+      //if (wfn->neighbours[p]->dist<ws->scale/2) {
+      if (wfn->neighbours[p]->dist<dist_to_ref[wf]) {
 
 	//affect the weight for the new object
         ws->fit_weights[newo_idx]->coefs[dsindex]=1-pc_out;
@@ -147,7 +146,7 @@ int add_object_gem(struct gem_ws *ws,enum otype type,struct graphics *gws) {
     free_neighbouring(wfn);
   }
 
-  if (gws) {
+  if (gws && gws->verbosity==VERB_DEBUG) {
     for(p=0;p<ws->ds->nb_points;p++) {
       printf("point %d ",p);
       for(o=0;o<ws->nb_objects;o++) {
@@ -158,12 +157,12 @@ int add_object_gem(struct gem_ws *ws,enum otype type,struct graphics *gws) {
     printf("points choosen\n");
     apply_graphics(gws);
     getchar();
-  }
+    }
   
 
   //create the new object
   ws->fit_objects=realloc(ws->fit_objects,sizeof(struct object *)*ws->nb_objects);
-  ws->fit_objects[newo_idx]=new_object(type,ws->ds,ws->fit_weights[newo_idx]);
+  ws->fit_objects[newo_idx]=new_object(type,ws->ds,ws->fit_weights[newo_idx],gws);
   //print_object(ws->fit_objects[newo_idx]);
 
   //modify the stdev of the new object : TODO use the parameter
@@ -174,7 +173,7 @@ int add_object_gem(struct gem_ws *ws,enum otype type,struct graphics *gws) {
   for(o=0;o<newo_idx;o++) {
     obj_type=ws->fit_objects[o]->type;
     free_object(ws->fit_objects[o]);
-    ws->fit_objects[o]=new_object(obj_type,ws->ds,ws->fit_weights[o]);
+    ws->fit_objects[o]=new_object(obj_type,ws->ds,ws->fit_weights[o],gws);
   }
   
   //reset the nb of iterations
@@ -226,7 +225,7 @@ int add_random_object_gem(struct gem_ws *ws,enum otype type) {
 
   //create the new object
   ws->fit_objects=realloc(ws->fit_objects,sizeof(struct object *)*ws->nb_objects);
-  ws->fit_objects[newo_idx]=new_object(type,ws->ds,ws->fit_weights[newo_idx]);
+  ws->fit_objects[newo_idx]=new_object(type,ws->ds,ws->fit_weights[newo_idx],NULL);
   //print_object(ws->fit_objects[newo_idx]);
 
   //modify the stdev of the new object : TODO use the parameter
@@ -237,7 +236,7 @@ int add_random_object_gem(struct gem_ws *ws,enum otype type) {
   int o;
   for(o=0;o<newo_idx;o++) {
     free_object(ws->fit_objects[o]);
-     ws->fit_objects[o]=new_object(type,ws->ds,ws->fit_weights[o]);
+    ws->fit_objects[o]=new_object(type,ws->ds,ws->fit_weights[o],NULL);
   }
   
   //reset the nb of iterations
@@ -529,7 +528,7 @@ int algo_gem(struct gem_ws *ws,struct graphics *gws) {
     for(o=0;o<nb_objects;o++) {
       type=ws->fit_objects[o]->type;
       free_object(ws->fit_objects[o]);
-      ws->fit_objects[o]=new_object(type,ws->ds,ws->fit_weights[o]);
+      ws->fit_objects[o]=new_object(type,ws->ds,ws->fit_weights[o],gws);
     }
 
     //calculate the global distance measure

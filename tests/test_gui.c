@@ -25,7 +25,7 @@ int main() {
   double dir[2]={1.0,1.0};
   struct point *point_min=new_valued_point(2,min);
   struct point *point_max=new_valued_point(2,max);
-  struct graphics *gws=new_graphics(2,600,600,point_min,point_max);
+  struct graphics *gws=new_graphics(2,600,600,point_min,point_max,1);
   struct vector *dir_vect=new_valued_vector(2,dir);
   struct point *ref=new_valued_point(2,center);
   struct line *l=new_line(ref,dir_vect);

@@ -18,8 +18,26 @@ along with Libgem.  If not, see <http://www.gnu.org/licenses/>
 
 #include "libgem.h"
 
-struct graphics *new_graphics(int dim,int w,int h,struct point *point_min,struct point*point_max) {
+char param2verb(char *param) {
+  char result=-1;
+  if (!strcmp(param,"none"))
+    result=VERB_NONE;
+  if (!strcmp(param,"summary"))
+    result=VERB_SUMMARY;
+  if (!strcmp(param,"detail"))
+    result=VERB_DETAIL;
+  if (!strcmp(param,"debug"))
+    result=VERB_DEBUG;
+  if (result==-1) {
+    printf("unknown verbosity : %s ... moving to none\n",param);
+    result=VERB_NONE;
+  }
+  return result;
+}
+
+struct graphics *new_graphics(int dim,int w,int h,struct point *point_min,struct point*point_max,char verbosity) {
   struct graphics *result=malloc(sizeof(struct graphics));
+  result->verbosity=verbosity;
   result->point_min=cp_point(point_min);
   result->point_max=cp_point(point_max);
   result->dim=dim;

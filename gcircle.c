@@ -314,7 +314,7 @@ struct circle *iRCP_old(struct dataset *ds,struct weights *w) {
   return result;
 }
 
-struct gcircle *new_gcircle(struct dataset *ds,struct weights *w) {
+struct gcircle *new_gcircle(struct dataset *ds,struct weights *w,struct graphics *gws) {
   int p;
   struct gcircle *result=malloc(sizeof(struct gcircle));
   result->circle=new_circle(new_point(ds->dim),0);

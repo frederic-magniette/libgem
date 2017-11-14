@@ -62,8 +62,9 @@ int main(int argc,char **argv) {
   pmax[1]=size;
   point_min=new_valued_point(2,pmin);
   point_max=new_valued_point(2,pmax);
-  if (!strcmp(argv[3],"detail")||!strcmp(argv[3],"summary"))
-    gws=new_graphics(2,500,500,point_min,point_max);
+  int o=param2verb(argv[3]);
+  if (o!=0)
+    gws=new_graphics(2,500,500,point_min,point_max,o);
   
   f=fopen("/tmp/perf_noise.txt","w");
   fprintf(f,"0.0 0.0\n");

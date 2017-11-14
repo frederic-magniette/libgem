@@ -183,7 +183,7 @@ struct vector *vector_abs_by2points(struct point *origin,struct point *dest) {
   return result;
 }
 
-struct vector *vector_polarized_by2points(struct point *origin,struct point *dest) {
+struct vector *vector_polarizedonx_by2points(struct point *origin,struct point *dest) {
   int i;
   struct vector *result=vector_by2points(origin,dest);
   for(i=0;i<origin->dim;i++) {
@@ -194,6 +194,13 @@ struct vector *vector_polarized_by2points(struct point *origin,struct point *des
       return result;
     }
   }
+  return result;
+}
+
+struct vector *vector_polarized_by2points(struct point *origin,struct point *dest,int pol_coord) {
+  struct vector *result=vector_by2points(origin,dest);
+  if (result->coords[pol_coord]<0)
+      mult_lambda_vect(result,-1);
   return result;
 }
 
@@ -221,9 +228,14 @@ void normalize_vector(struct vector *v) {
 struct vector *weighted_mean_vector(struct dataset *ds,struct point *ref,struct weights *w) {
   int i,j;
   struct vector *result=new_vector(ds->dim);
-  struct vector *vtemp;
+  //struct vector *vtemp;
   double sum_weights=0;
+  struct vector **dirs;
+  struct vector *amplitude=new_vector(ds->dim);
+  int prefdir=0;
+  double prefvalue=0.0;
 
+  //verify that the sum of weights are different from 0
   for(i=0;i<ds->nb_points;i++) {
     sum_weights+=w->coefs[i];
   }
@@ -232,21 +244,48 @@ struct vector *weighted_mean_vector(struct dataset *ds,struct point *ref,struct 
     return result;
   }
 
+  //calculate the weighted "ref to points" vectors
+  dirs=malloc(sizeof(struct vector *)*ds->nb_points);
   for(i=0;i<ds->nb_points;i++) {
-    sum_weights+=w->coefs[i];
-    vtemp=vector_polarized_by2points(ref,ds->points[i]);
-
-    //sum the weighted value
-    for(j=0;j<result->dim;j++) {
-      result->coords[j]+=vtemp->coords[j]*w->coefs[i];
+    dirs[i]=vector_by2points(ref,ds->points[i]);
+    mult_lambda_vect(dirs[i],w->coefs[i]);
+  }
+ 
+  //calculate amplitude vector and preferred direction
+  for(i=0;i<ds->nb_points;i++) {
+    for(j=0;j<ds->dim;j++) {
+      amplitude->coords[j]+=fabs(dirs[i]->coords[j]);
+      if (amplitude->coords[j]>prefvalue) {
+        prefdir=j;
+        prefvalue=(amplitude->coords[j]);
+      }
     }
-    free_vector(vtemp);
   }
-  //printf("sum_weights=%f\n",sum_weights);
-  for(i=0;i<result->dim;i++) {
-    result->coords[i]=result->coords[i]/sum_weights;
+  //print_vector(amplitude);
+  free_vector(amplitude);
+  //printf("prefered direction : %d\n",prefdir);
+  
+  //polarize the vectors
+  for(i=0;i<ds->nb_points;i++) {
+    if (dirs[i]->coords[prefdir]<0)
+      mult_lambda_vect(dirs[i],-1);
   }
+
+  //calculate the sum vector
+  for(i=0;i<ds->nb_points;i++) {
+    for(j=0;j<result->dim;j++) {
+      result->coords[j]+=dirs[i]->coords[j];
+    }
+  }
+
   normalize_vector(result);
+
+  //free dirs
+  for(i=0;i<ds->nb_points;i++) {
+    free_vector(dirs[i]);
+  }
+  free(dirs);
+
   return result;
 }
 

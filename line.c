@@ -161,42 +161,19 @@ struct point *get_coord_line(struct line *l,double val,int axis) {
   return result;
 }
 
-
-int best_axis_line(struct line *l,struct point *point_min,struct point *point_max,int nb_steps) {
-  int best_axis=-1;
-  int nbp_best_axis=-1;
-  int nbp;
-  int axis,k;
-  double refmin,refmax,ref;
-  struct point *p;
-  
-  //find the best axis
-  for(axis=0;axis<l->dim;axis++) {
-    nbp=0;
-    refmin=point_min->coords[axis];
-    refmax=point_max->coords[axis];
-    
-    //avoid null dimension
-    if (refmin==refmax)
-      continue;
-
-    //calc the number of valid point for this axis
-    ref=refmin;
-    for(k=0;k<nb_steps;k++) {
-      p=get_coord_line(l,ref,axis);
-      if (is_valid_point(p,point_min,point_max))
-        nbp++;
-      ref+=(refmax-refmin)/(nb_steps-1);
-      free_point(p);
-    }
-
-    //select this axis if the number of valid points is higher
-    if (nbp>nbp_best_axis) {
-      best_axis=axis;
-      nbp_best_axis=nbp;
+int best_axis_line(struct line *l) {
+  int i;
+  int result;
+  double bestvalue=0.0;
+  double cur;
+  for(i=0;i<l->dim;i++) {
+    cur=fabs(l->dir_vect->coords[i]);
+    if (cur>bestvalue) {
+      result=i;
+      bestvalue=cur;
     }
   }
-  return best_axis;
+  return result;
 }
 
 struct point **boxed_line(struct line *l,struct point *point_min,struct point *point_max,int nb_steps) {
@@ -215,7 +192,7 @@ struct point **boxed_line(struct line *l,struct point *point_min,struct point *p
   }
 
   //select output axis
-  best_axis=best_axis_line(l,point_min,point_max,nb_steps);
+  best_axis=best_axis_line(l);
   //printf("best axis is %d\n",best_axis);
 
   refmin=point_min->coords[best_axis];
@@ -274,7 +251,6 @@ void plot_line(struct line *l,int id,struct graphics *gws) {
     if (gws->sp) {
       points=boxed_line(l,gws->sp->point_min,gws->sp->point_max,gws->sp->w);
       for(i=0;i<gws->sp->w;i++) {
-
         if (points[i]!=NULL) {
           plot_point(points[i],id,gws);
           free_point(points[i]);

@@ -81,7 +81,7 @@ int main(int argc,char **argv) {
   nbp=ds->nb_points;
 
   //plot data
-  gws_3d=new_graphics(3,700,700,ds->point_min,ds->point_max);
+  gws_3d=new_graphics(3,700,700,ds->point_min,ds->point_max,2);
   plot_dataset(ds,gws_3d);
   getchar();
   
@@ -114,7 +114,7 @@ int main(int argc,char **argv) {
   //plot projection
   printf("proj base=\n");
   print_matrix(base);
-  gws_2d=new_graphics(2,500,500,ds_proj->point_min,ds_proj->point_max);
+  gws_2d=new_graphics(2,500,500,ds_proj->point_min,ds_proj->point_max,2);
   plot_dataset(ds_proj,gws_2d);
   get_plotfile(gws_3d->gp,name);
   dump_base_matrix(base,support->ref,name);

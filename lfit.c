@@ -34,24 +34,14 @@ int main(int argc,char **argv) {
   int seed=atoi(argv[4]);
   double convcrit=atof(argv[5]);
 
-  int o=-1;
-  if (!strcmp(argv[6],"none"))
-    o=0;
-  if (!strcmp(argv[6],"summary"))
-    o=1;
-  if (!strcmp(argv[6],"detail"))
-    o=2;
-  if (o==-1) {
-    printf("unknown output : %s\n",argv[3]);
-    exit(1);
-  }
+  char o=param2verb(argv[6]);
 
   if (ds==NULL) {
     printf("error reading file\n");
     return -1;
   }
   if (o!=0)
-    gws=new_graphics(dim,700,700,ds->point_min,ds->point_max);
+    gws=new_graphics(dim,700,700,ds->point_min,ds->point_max,o);
   srand(seed);
   emws=init_gem(ds,convcrit);
   for(i=0;i<nb_lines;i++)

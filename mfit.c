@@ -45,18 +45,10 @@ int main(int argc,char **argv) {
     exit(1);
   }
   
-  if (!strcmp(argv[6],"none"))
-    o=0;
-  if (!strcmp(argv[6],"summary"))
-    o=1;
-  if (!strcmp(argv[6],"detail"))
-    o=2;
-  if (o==-1) {
-    printf("unknown output : %s\n",argv[6]);
-  }
+  o=param2verb(argv[6]);
 
   if (o!=0)
-    gws=new_graphics(dim,700,700,ds->point_min,ds->point_max);
+    gws=new_graphics(dim,700,700,ds->point_min,ds->point_max,o);
   
 
   if (ds==NULL) {

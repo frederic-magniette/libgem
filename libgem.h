@@ -363,6 +363,11 @@ struct point *real2sdl_splot(double x,double y,struct splot *ws);
 void set_pixel_splot(struct splot *sp,int x,int y,int r,int g,int b);
 void get_pixel_splot(struct splot *sp,int x,int y,int *r,int *g,int *b);
 
+#define VERB_NONE 0
+#define VERB_SUMMARY 1
+#define VERB_DETAIL 2
+#define VERB_DEBUG 3
+
 struct graphics {
   int dim;
   struct point *point_min;
@@ -371,9 +376,11 @@ struct graphics {
   int h;
   struct gplot *gp;
   struct splot *sp;
+  char verbosity;
 };
 
-struct graphics *new_graphics(int dim,int w,int h,struct point *point_min,struct point*point_max);
+struct graphics *new_graphics(int dim,int w,int h,struct point *point_min,struct point*point_max,char verbosity);
+char param2verb(char *param);
 void free_graphics(struct graphics *gws);
 void apply_graphics(struct graphics *gws);
 
@@ -384,7 +391,7 @@ struct gline {
 
 //probabilized lines
 
-struct gline *new_gline(struct dataset *ds,struct weights *w);
+struct gline *new_gline(struct dataset *ds,struct weights *w,struct graphics *gws);
 //struct gline *new_precomputed_gline(int dim,struct point *ref,struct vector *dir_vect,struct dataset *ds,struct weights *w);
 struct gline *cp_gline(struct gline *gl);
 void print_gline(struct gline *gl);
@@ -404,7 +411,7 @@ struct gcircle {
   struct distrib *pgauss;
 };
 
-struct gcircle *new_gcircle(struct dataset *ds,struct weights *w);
+struct gcircle *new_gcircle(struct dataset *ds,struct weights *w,struct graphics *gws);
 double belonging_proba_gcircle(struct gcircle *gc,struct point *p);
 void free_gcircle(struct gcircle *gc);
 void print_gcircle(struct gcircle *gc);
@@ -426,7 +433,7 @@ struct object {
 
 double belonging_proba_object(struct object *o,struct point *p);
 double dist_object(struct object *o,struct point *p);
-struct object *new_object(enum otype type,struct dataset *ds,struct weights *w);
+struct object *new_object(enum otype type,struct dataset *ds,struct weights *w,struct graphics *gws);
 struct object *cp_object(struct object *src);
 void free_object(struct object *o);
 void plot_object(struct object *o,int id,struct graphics *gws);

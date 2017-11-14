@@ -30,7 +30,7 @@ void test_gs() {
 
 void test_proj() {
   struct dataset *ds=new_dataset_fromfile(2,"data/test_algebra.txt");
-  struct graphics *gws=new_graphics(1,500,500,ds->point_min,ds->point_max);
+  struct graphics *gws=new_graphics(1,500,500,ds->point_min,ds->point_max,3);
   double vals[2]={0,1};
   struct vector *v=new_valued_vector(2,vals);
   struct matrix *m=gram_schmidt(v);

@@ -59,7 +59,7 @@ int main(int argc,char **argv) {
   pmax[1]=size;
   point_min=new_valued_point(2,pmin);
   point_max=new_valued_point(2,pmax);
-  gws=new_graphics(2,1000,1000,point_min,point_max);
+  gws=new_graphics(2,1000,1000,point_min,point_max,1);
   
   //for(angle_lines=10;angle_lines<=90;angle_lines+=10) {
     sprintf(fname,"/tmp/isotropy_%d.txt",angle_lines);

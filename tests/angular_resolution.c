@@ -30,9 +30,9 @@ int main(int argc,char **argv) {
   FILE *f;
   int scalecrit;
 
-  f=fopen("angul_resol.txt","w");
+  f=fopen("/tmp/angul_resol.txt","w");
   
-  for(scalecrit=10;scalecrit<=70;scalecrit++) {
+  for(scalecrit=10;scalecrit<=100;scalecrit++) {
     for(angle_iter=0;angle_iter<180;angle_iter++) {
       //printf("\nscalecrit=%d angle=%d\n",scalecrit,angle_iter);
       
@@ -54,7 +54,7 @@ int main(int argc,char **argv) {
       }
       
       //exec the multifit
-      result=multifit(ds,0.0001,scalecrit,0,0,NULL);
+      result=multifit(ds,0.0001,scalecrit,LINE,0,NULL);
       //remove_dup_objects_gem(result);
       remove_degenerated_objects_gem(result,3);
 

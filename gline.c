@@ -20,11 +20,19 @@ along with Libgem.  If not, see <http://www.gnu.org/licenses/>
 
 //*********************** GAUSSIAN LINES ***************
 
-struct gline *new_gline(struct dataset *ds,struct weights *w) {
+struct gline *new_gline(struct dataset *ds,struct weights *w,struct graphics *gws) {
   int p;
   struct gline *result=malloc(sizeof(struct gline));
   result->line=malloc(sizeof(struct line));
+
+  //calculate the reference point
   result->line->ref=weighted_barycenter_point(ds,w);
+  //print_point(result->line->ref);
+  //printf("plot ref");
+  //plot_point(result->line->ref,2,gws);
+  //apply_graphics(gws);
+  //getchar();
+
   result->line->dir_vect=weighted_mean_vector(ds,result->line->ref,w);
   result->line->dim=result->line->ref->dim;
 

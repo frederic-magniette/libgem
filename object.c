@@ -42,15 +42,15 @@ double dist_object(struct object *o,struct point *p) {
   }
 }
 
-struct object *new_object(enum otype type,struct dataset *ds,struct weights *w) {
+struct object *new_object(enum otype type,struct dataset *ds,struct weights *w,struct graphics *gws) {
   struct object *result=malloc(sizeof(struct object));
   result->type=type;
   switch(type) {
   case LINE:
-    result->container=(void *)new_gline(ds,w);
+    result->container=(void *)new_gline(ds,w,gws);
     break;
   case CIRCLE:
-    result->container=(void *)new_gcircle(ds,w);
+    result->container=(void *)new_gcircle(ds,w,gws);
     break;
   default:
     printf("unknown object type...exiting\n");

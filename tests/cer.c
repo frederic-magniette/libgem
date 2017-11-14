@@ -73,7 +73,7 @@ int main(int argc,char **argv) {
   pmax[1]=size;
   point_min=new_valued_point(2,pmin);
   point_max=new_valued_point(2,pmax);
-  gws=new_graphics(2,500,500,point_min,point_max);
+  gws=new_graphics(2,500,500,point_min,point_max,2);
 
 
   for(scalecrit=20;scalecrit<60;scalecrit+=10) {

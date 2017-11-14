@@ -35,21 +35,10 @@ int main(int argc,char **argv) {
   struct dataset *ds=new_dataset_fromfile(dim,argv[1]);
   struct graphics *gws=NULL;
 
-  int o=-1;
-  if (!strcmp(argv[5],"none"))
-    o=0;
-  if (!strcmp(argv[5],"summary"))
-    o=1;
-  if (!strcmp(argv[5],"detail"))
-    o=2;
-  if (o==-1) {
-    printf("unknown output : %s\n",argv[3]);
-    exit(1);
-  }
-  //printf("o=%d\n",o);
+  int o=param2verb(argv[5]);
 
   if (o!=0)
-    gws=new_graphics(dim,700,700,ds->point_min,ds->point_max); 
+    gws=new_graphics(dim,700,700,ds->point_min,ds->point_max,o); 
 
   if (ds==NULL) {
     printf("error reading file\n");

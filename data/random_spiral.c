@@ -62,7 +62,7 @@ int main(int argc,char **argv) {
   s=new_spiral(support,radius,angular_offset,angular_speed);
   print_spiral(s);
   dump_boxed_spiral(s,output_name,point_min,point_max,nb_steps);
-  struct graphics *gws=new_graphics(3,500,500,point_min,point_max);
+  struct graphics *gws=new_graphics(3,500,500,point_min,point_max,1);
   plot_spiral(s,0,gws);
   getchar();
   
