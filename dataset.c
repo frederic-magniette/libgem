@@ -376,6 +376,7 @@ struct dataset *ortho_projection_dataset(struct dataset *ds,struct matrix *base,
   p_bp=change_base_point(ref,base);
   printf("projection of ref\n");
   print_point(p_bp);
+  free_point(p_bp);
   //printf("new base : \n");
   //print_matrix(base);
   for(i=0;i<ds->nb_points;i++) {

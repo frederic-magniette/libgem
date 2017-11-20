@@ -75,6 +75,8 @@ void free_splot(struct splot *ws) {
   free_point(ws->point_min);
   free_point(ws->point_max);
   free(ws);
+  SDL_VideoQuit();
+  SDL_Quit();
 }
 
 struct point *sdl2real_splot(int i,int j,struct splot *ws) {

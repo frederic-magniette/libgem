@@ -43,7 +43,7 @@ struct spiral *new_based_spiral(struct line *support,double radius,double angula
 void free_spiral(struct spiral *s) {
   if (!s)
     return;
-  free_line(s->support);
+  //free_line(s->support);
   free(s);
 }
 
@@ -88,7 +88,10 @@ void dump_boxed_spiral(struct spiral *s,char *filename,struct point *point_min,s
       //printf("for point %d dist to support=%f\n",i,dist_line_point(s->support,points[i]));
     }
   }
-
+  free_vector(norm_sup);
+  for(i=0;i<nb_steps;i++)
+    if (points[i]!=NULL)
+      free_point(points[i]);
   free(points);
   fclose(f);
 }

@@ -604,7 +604,7 @@ int algo_gem(struct gem_ws *ws,struct graphics *gws) {
   free(bprobas);
   free(total_proba);
   free(pk);
-
+  free_distrib(global_distrib);
   return converged;
 }
 

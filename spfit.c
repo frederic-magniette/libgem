@@ -89,8 +89,8 @@ int main(int argc,char **argv) {
   //1. obtain support by gem
   printf("step 1 : obtain spiral support by gem\n");
   emws_3d=init_gem(ds,0.001);
-  add_object_gem(emws_3d,LINE,NULL);
-  res=algo_gem(emws_3d,NULL);
+  add_object_gem(emws_3d,LINE,gws_3d);
+  res=algo_gem(emws_3d,gws_3d);
   if (res==0)
     printf("gem algo has diverged\n");
   support=get_line_from_gem(emws_3d,0);
@@ -125,8 +125,8 @@ int main(int argc,char **argv) {
   //3. circular fit of circle
   printf("step 3 : fit circle on projection with gem\n");
   emws_2d=init_gem(ds_proj,0.001);
-  add_object_gem(emws_2d,CIRCLE,NULL);
-  algo_gem(emws_2d,NULL);
+  add_object_gem(emws_2d,CIRCLE,gws_2d);
+  algo_gem(emws_2d,gws_2d);
   fit=get_circle_from_gem(emws_2d,0);
 
   //plot the circle fit
@@ -190,6 +190,7 @@ int main(int argc,char **argv) {
   for(i=0;i<nbp;i++)
     free(vps[i]);
   free(vps);
+  free_vector(vbase);
   free_matrix(base);
   free_graphics(gws_2d);
   free_graphics(gws_3d);
@@ -197,5 +198,6 @@ int main(int argc,char **argv) {
   free_gem(emws_3d);
   free_dataset(ds_proj);
   free_dataset(ds);
+  free_distrib(aspeed);
   return 0;
 }
