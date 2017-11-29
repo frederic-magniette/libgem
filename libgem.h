@@ -80,7 +80,7 @@ void dump_dataset(struct dataset *ds,char *filename);
 void calc_min_point_dataset(struct dataset *ds);
 void calc_max_point_dataset(struct dataset *ds);
 void free_dataset(struct dataset *ds);
-struct dataset * new_zero_dataset(int nb_points,int dim);
+struct dataset * new_dataset_zero(int nb_points,int dim);
 struct dataset * new_empty_dataset(int dim);
 void plot_weighted_dataset(struct dataset *ds,struct weights **w,int nb_lines,struct graphics *gws);
 void plot_dataset(struct dataset *ds,struct graphics *gws);
