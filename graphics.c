@@ -48,7 +48,7 @@ struct graphics *new_graphics(int dim,int w,int h,struct point *point_min,struct
   switch(dim) {
   case 1:
     printf("graphics : using gnuplot for 1d plots (histos)\n");
-    result->gp=new_gplot(w,h);
+    result->gp=new_gplot(w,h,result->point_min,result->point_max);
     break; 
   case 2:
     printf("graphics : using SDL for 2d plots\n");
@@ -58,7 +58,7 @@ struct graphics *new_graphics(int dim,int w,int h,struct point *point_min,struct
     break;
   case 3:
     printf("graphics : using gnuplot for 3d plots\n");
-    result->gp=new_gplot(w,h);
+    result->gp=new_gplot(w,h,result->point_min,result->point_max);
     break;
   default:
     printf("graphics : unable to represent because dimension is %d\n",dim);

@@ -162,7 +162,6 @@ double normalized_likelyhood_wgauss(struct wgauss *dist,double x) {
     printf("mean=%f\n",dist->mean);
     printf("stdev=%f\n",dist->stdev);
     printf("x=%f\n",x);
-    exit(1);
   }
   return result;
 }

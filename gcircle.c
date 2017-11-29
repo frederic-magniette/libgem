@@ -131,7 +131,7 @@ struct circle *iRCP(struct dataset *ds,struct weights *w) {
         print_point(ds->points[p]);
         printf("and circle : \n");
         print_circle(result);
-	exit(1);
+        return NULL;
       }
       add_data_distrib(dd,dists[p],w->coefs[p]);
       if (gws) {
@@ -175,6 +175,11 @@ struct gcircle *new_gcircle(struct dataset *ds,struct weights *w,struct graphics
   struct gcircle *result=malloc(sizeof(struct gcircle));
   result->pgauss=new_distrib(CWGAUSS);
   result->circle=iRCP(ds,w);
+  if (result->circle==NULL) {
+    free_distrib(result->pgauss);
+    free(result);
+    return NULL;
+  }
 
   //calculate the centred weighted gaussian distrib for new circle
   for(p=0;p<ds->nb_points;p++) {
@@ -216,6 +221,7 @@ void plot_field_gcircle(struct gcircle *gc,int id,struct graphics *gws) {
   int x,y;
   int r,g,b;
   double proba;
+  double llh;
   struct point *pt;
   if (gws->sp) {
     //plot the field
@@ -226,7 +232,13 @@ void plot_field_gcircle(struct gcircle *gc,int id,struct graphics *gws) {
 	pt=sdl2real_splot(x,y,gws->sp);
 	distance=dist_gcircle(gc,pt);
 	free_point(pt);
-	proba=log(1+normalized_likelyhood_distrib(gc->pgauss,distance)*sqrt(2*PI));
+        llh=normalized_likelyhood_distrib(gc->pgauss,distance);
+        if (isnan(llh)) {
+          printf("error : likelihood is nan\n");
+          printf("dont print point %d,%d\n",x,y);
+          continue;
+        }
+	proba=log(1+llh*sqrt(2*PI));
         
 	//calc the color : proportional and thresholded
         get_pixel_splot(gws->sp,x,y,&r,&g,&b);

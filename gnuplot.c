@@ -18,16 +18,19 @@ along with Libgem.  If not, see <http://www.gnu.org/licenses/>
 
 #include "libgem.h"
 
-struct gplot *new_gplot(int w,int l) {
+struct gplot *new_gplot(int w,int l,struct point *point_min,struct point*point_max) {
   struct gplot *result=malloc(sizeof(struct gplot));
   result->fn_index=0;
   result->pipe=popen("gnuplot","w");
   result->first_plot=1;
+  result->point_min=cp_point(point_min);
+  result->point_max=cp_point(point_max);
   
   
   if (result->pipe==NULL) {
-    printf("Error : cant open gnuplot...exiting\n");
-    exit(1);
+    printf("Error : cant open gnuplot\n");
+    free(result);
+    return NULL;
   }
   //fprintf(result->pipe,"set term x11 noraise\n");
   fprintf(result->pipe,"set term wxt noraise size %d,%d\n",w,l);
@@ -56,6 +59,14 @@ void plot_histo_file(struct gplot *gp,double xmin,double xmax,double box_large,c
   fflush(gp->pipe);
 }
 
+void set_range(struct gplot *gp,int dim) {
+  if (dim==3) {
+    fprintf(gp->pipe,"set xrange[%f:%f]\n",gp->point_min->coords[0],gp->point_max->coords[0]);
+    fprintf(gp->pipe,"set yrange[%f:%f]\n",gp->point_min->coords[1],gp->point_max->coords[1]);
+    fprintf(gp->pipe,"set zrange[%f:%f]\n",gp->point_min->coords[2],gp->point_max->coords[2]);
+  }
+}
+
 void plot_file(struct gplot *gp,int dim,char *filename,char withlines,char replot,char *title) {
   
   int real_replot=replot;
@@ -79,24 +90,29 @@ void plot_file(struct gplot *gp,int dim,char *filename,char withlines,char replo
       else
         fprintf(gp->pipe,"plot \"%s\" with lines title \"%s\"\n",filename,title);
     } else {
-      if (real_replot) 
+      if (real_replot) {
         fprintf(gp->pipe,"replot \"%s\" title \"%s\"\n",filename,title);
-      else 
+      } else { 
         fprintf(gp->pipe,"plot \"%s\" title \"%s\"\n",filename,title);
+      }
     }
   }
 
   if (dim==3) {
     if (withlines) {
-      if (real_replot)
+      if (real_replot) {
         fprintf(gp->pipe,"replot \"%s\" with lines title \"%s\"\n",filename,title);
-      else
+      } else {
+        set_range(gp,dim);
         fprintf(gp->pipe,"splot \"%s\" with lines title \"%s\"\n",filename,title);
+      }
     } else {
-      if (real_replot) 
+      if (real_replot) {
         fprintf(gp->pipe,"replot \"%s\" title \"%s\"\n",filename,title);
-      else 
+      } else { 
+        set_range(gp,dim);
         fprintf(gp->pipe,"splot \"%s\" title \"%s\"\n",filename,title);
+      }
     }
   }
 

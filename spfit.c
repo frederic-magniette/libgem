@@ -72,7 +72,7 @@ int main(int argc,char **argv) {
 
   if (argc!=2) {
     printf("usage %s data_filename\n",argv[0]);
-    exit(1);
+    return 1;
   }
 
   //0. import data

@@ -30,6 +30,21 @@ struct point *new_point(int dim) {
   return result;
 }
 
+struct point *new_3D_point(double x,double y,double z) {
+  struct point *result=new_point(3);
+  result->coords[0]=x;
+  result->coords[1]=y;
+  result->coords[2]=z;
+  return result;
+}
+
+struct point *new_2D_point(double x,double y) {
+  struct point *result=new_point(2);
+  result->coords[0]=x;
+  result->coords[1]=y;
+  return result;
+}
+
 struct point *new_valued_point(int dim,double *values) {
   struct point *result=new_point(dim);
   int i;

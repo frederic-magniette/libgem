@@ -80,7 +80,6 @@ double dist_line_point(struct line *l,struct point *p) {
     printf("ERROR : distance is nan\n");
     print_line(l);
     print_point(p);
-    exit(1);
   }
 
   return result;
@@ -163,7 +162,7 @@ struct point *get_coord_line(struct line *l,double val,int axis) {
 
 int best_axis_line(struct line *l) {
   int i;
-  int result;
+  int result=0;
   double bestvalue=0.0;
   double cur;
   for(i=0;i<l->dim;i++) {

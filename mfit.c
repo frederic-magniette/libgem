@@ -41,8 +41,8 @@ int main(int argc,char **argv) {
   if (!strcmp(argv[3],"line"))
     type=LINE;
   if (type==-1) {
-    printf("unknown type %s\n",argv[3]);
-    exit(1);
+    printf("unknown type %s : type should be circle or line\n",argv[3]);
+    return 1;
   }
   
   o=param2verb(argv[6]);
@@ -56,6 +56,10 @@ int main(int argc,char **argv) {
     return -1;
   }
   result=multifit(ds,convcrit,scalecrit,type,o,gws);
+  if (result==NULL) {
+    printf("fit has failed\n");
+    return 1;
+  }
   printf("removing degenerated objects\n");
   remove_degenerated_objects_gem(result,4);
   print_gem(result);
@@ -67,6 +71,6 @@ int main(int argc,char **argv) {
   free_dataset(ds);
   free_graphics(gws);
   free_gem(result);
-  return 1;
+  return 0;
 }
 

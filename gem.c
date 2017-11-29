@@ -454,9 +454,17 @@ int algo_gem(struct gem_ws *ws,struct graphics *gws) {
       for(o=0;o<nb_objects;o++) {
 	if (hvar) {
 	  bprobas[p][o]=normalized_likelyhood_distrib(global_distrib,ws->distance[o][p]);
+          if (isnan(bprobas[p][o])) {
+            printf("error : bproba of %d,%d is nan\n",p,o);
+            bprobas[p][o]=0;
+          }
 	  total_proba[p]+=bprobas[p][o];
 	} else {
 	  bprobas[p][o]=belonging_proba_object(ws->fit_objects[o],ws->ds->points[p]);
+          if (isnan(bprobas[p][o])) {
+            printf("error : bproba of %d,%d is nan\n",p,o);
+            bprobas[p][o]=0;
+          }
 	  total_proba[p]+=bprobas[p][o];
 	}
       }

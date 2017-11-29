@@ -90,6 +90,7 @@ void plot_field_gline(struct gline *gl,int id,struct graphics *gws) {
   int x,y;
   int r,g,b;
   double proba;
+  double llh;
   struct point *pt;
   double xmin,xmax;
   char title[1024];
@@ -118,7 +119,13 @@ void plot_field_gline(struct gline *gl,int id,struct graphics *gws) {
           pt=sdl2real_splot(x,y,gws->sp);
           distance=dist_gline(gl,pt);
           free_point(pt);
-          proba=log(1+normalized_likelyhood_distrib(gl->pgauss,distance)*sqrt(2*PI));
+          llh=normalized_likelyhood_distrib(gl->pgauss,distance);
+          if (isnan(llh)) {
+            printf("error : likelihood is nan\n");
+            printf("dont print point %d,%d\n",x,y);
+            continue;
+          }
+          proba=log(1+llh*sqrt(2*PI));
           
           //calc the color : proportional and thresholded
           get_pixel_splot(gws->sp,x,y,&r,&g,&b);

@@ -48,6 +48,8 @@ struct point {
 struct point *new_point(int dim);
 struct point *new_valued_point(int dim,double *values);
 struct point *new_random_point(int dim,struct point *pmin,struct point *pmax);
+struct point *new_3D_point(double x,double y,double z);
+struct point *new_2D_point(double x,double y);
 struct point *cp_point(struct point *p);
 void print_point(struct point *p);
 void free_point(struct point *p);
@@ -329,12 +331,14 @@ void free_normal_gene(struct normal_gene *gene);
 //gnuplot
 
 struct gplot {
+  struct point *point_min;
+  struct point *point_max;
   int first_plot;
   int fn_index;
   FILE *pipe;
 };
 
-struct gplot *new_gplot(int w,int l);
+struct gplot *new_gplot(int w,int l,struct point *point_min,struct point*point_max);
 void plot_file(struct gplot *gp,int dim,char *filename,char withlines,char replot,char *title);
 void plot_histo_file(struct gplot *gp,double xmin,double xmax,double box_large,char *filename,char replot,char *title);
 void replot(struct gplot *gp);

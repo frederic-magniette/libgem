@@ -25,8 +25,8 @@ double belonging_proba_object(struct object *o,struct point *p) {
   case CIRCLE:
     return belonging_proba_gcircle((struct gcircle *)o->container,p);
   default:
-    printf("unknown object type...exiting\n");
-    exit(1);
+    printf("unknown object type\n");
+    return NAN;
   }
 }
 
@@ -37,8 +37,8 @@ double dist_object(struct object *o,struct point *p) {
   case CIRCLE:
     return dist_gcircle((struct gcircle *)o->container,p);
   default:
-    printf("unknown object type...exiting\n");
-    exit(1);
+    printf("unknown object type\n");
+    return NAN;
   }
 }
 
@@ -53,8 +53,9 @@ struct object *new_object(enum otype type,struct dataset *ds,struct weights *w,s
     result->container=(void *)new_gcircle(ds,w,gws);
     break;
   default:
-    printf("unknown object type...exiting\n");
-    exit(1);
+    printf("unknown object type\n");
+    free(result);
+    return NULL;
   }
   return result;
 }
@@ -70,8 +71,9 @@ struct object *cp_object(struct object *src) {
     result->container=(void *)cp_gcircle((struct gcircle *)src->container);
     break;
   default:
-    printf("unknown object type...exiting\n");
-    exit(1);
+    printf("unknown object type\n");
+    free(result);
+    return NULL;
   }
   return result;
 }
@@ -87,8 +89,7 @@ void free_object(struct object *o) {
     free_gcircle((struct gcircle *)o->container);
     break;
   default:
-    printf("unknown object type...exiting\n");
-    exit(1);
+    printf("unknown object type\n");
   }
   free(o);
 }
@@ -100,8 +101,7 @@ void plot_object(struct object *o,int id,struct graphics *gws) {
   case CIRCLE:
     return plot_gcircle((struct gcircle *)o->container,id,gws);
   default:
-    printf("unknown object type...exiting\n");
-    exit(1);
+    printf("unknown object type %d\n",o->type);
   }
 }
 
@@ -112,8 +112,7 @@ void plot_field_object(struct object *o,int id,struct graphics *gws) {
   case CIRCLE:
     return plot_field_gcircle((struct gcircle *)o->container,id,gws);
   default:
-    printf("unknown object type...exiting\n");
-    exit(1);
+    printf("unknown object type %d\n",o->type);
   }
 }
 
@@ -124,8 +123,7 @@ void print_object(struct object *o) {
   case CIRCLE:
     return print_gcircle((struct gcircle *)o->container);
   default:
-    printf("unknown object type...exiting\n");
-    exit(1);
+    printf("unknown object type %d\n",o->type);
   }
 }
 
@@ -140,8 +138,7 @@ void dump_object(struct object *o,FILE *f) {
     dump_gcircle((struct gcircle *)o->container,f);
     break;
   default:
-    printf("unknown object type...exiting\n");
-    exit(1);
+    printf("unknown object type %d\n",o->type);
   }
 }
 
@@ -152,8 +149,8 @@ double stdev_object(struct object *o) {
   case CIRCLE:
     return stdev_distrib(((struct gcircle *)o->container)->pgauss);
   default:
-    printf("unknown object type...exiting\n");
-    exit(1);
+    printf("unknown object type\n");
+    return NAN;
   }
 }
 
@@ -166,8 +163,7 @@ void set_stdev_object(struct object *o,double stdev)  {
     set_stdev_distrib(((struct gcircle *)o->container)->pgauss,stdev);
     break;
   default:
-    printf("unknown object type %d for set_stdev...exiting\n",o->type);
-    exit(1);
+    printf("unknown object type %d for set_stdev\n",o->type);
   }
 }
 
@@ -180,7 +176,6 @@ int same_object(struct object *o1,struct object *o2,double distlim) {
   case CIRCLE:
     return same_gcircle(((struct gcircle *)o1->container),((struct gcircle *)o2->container),distlim);
   default:
-    printf("unknown object type...exiting\n");
-    exit(1);
+    return 0;
   }
 }

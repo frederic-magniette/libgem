@@ -46,7 +46,7 @@ struct gem_ws *multifit(struct dataset *ds,double convcrit,double scalecrit,enum
       break;
     default:
       printf("unknown method %d\n",method);
-      exit(1);
+      return NULL;
     }
 
     if (output!=0) {
