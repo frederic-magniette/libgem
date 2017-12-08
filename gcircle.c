@@ -82,6 +82,8 @@ struct circle *iRCP(struct dataset *ds,struct weights *w) {
   while(1) {
     
     nb_iter++;
+    if (nb_iter>50)
+      break; //TODO make a parameter
     
     //calculate the new center
     zero_vector(move,0.0);

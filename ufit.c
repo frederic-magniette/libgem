@@ -34,6 +34,7 @@ int main(int argc,char **argv) {
   double scalecrit=atof(argv[4]);
   struct dataset *ds=new_dataset_fromfile(dim,argv[1]);
   struct graphics *gws=NULL;
+  struct gem_ws *result_gem;
 
   int o=param2verb(argv[5]);
 
@@ -45,8 +46,16 @@ int main(int argc,char **argv) {
     return -1;
   }
   result=ufit(ds,convcrit,scalecrit,o,gws);
+  printf("removing degenerated objects\n");
   print_ufit_tree(result);
-  dump_gem(result->best->gem,"/tmp/ufit_res.txt");
+
+  result_gem=result->best->gem;
+  dump_gem(result_gem,"/tmp/ufit_res.txt");
+  remove_degenerated_objects_gem(result_gem,4);
+  if (o!=0) {
+    plot_gem(result_gem,gws);
+    getchar();
+  }
   free_ufit_tree(result);
   free_dataset(ds);
   free_graphics(gws);
