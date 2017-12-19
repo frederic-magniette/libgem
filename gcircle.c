@@ -46,7 +46,17 @@ struct circle *iRCP(struct dataset *ds,struct weights *w) {
   struct point *new_center;
 
   //uncomment this if you want graphical hint about circle fit
-  //gws=new_graphics(ds->dim,1000,1000,ds->point_min,ds->point_max);
+  /*
+    struct point *pmin, *pmax;
+    pmin=cp_point(ds->point_min);
+    pmax=cp_point(ds->point_max);
+    for(p=0;p<ds->dim;p++) {
+    pmin->coords[p]-=2;
+    pmax->coords[p]+=2;
+    }
+    gws=new_graphics(ds->dim,1000,1000,pmin,pmax,param2verb("detail"));
+  */
+ 
   if (gws) {
     plot_weighted_dataset(ds,&w,1,gws);
     printf("calculating new gcircle for weights : ");
@@ -165,6 +175,14 @@ struct circle *iRCP(struct dataset *ds,struct weights *w) {
     }
   } //end of while(1)
   
+
+  if (gws) {
+    printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    printf("!!!!!!!!!!!!!ENDED!!!!!!!!!!!!!!!\n");
+    printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+    getchar();
+  }
+
   //free allocated memory
   free(dists);
   free_distrib(dd);

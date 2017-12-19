@@ -24,6 +24,7 @@ install:
 
 liblink:
 	rm -f /usr/local/lib/libgem.so
+	rm -f /usr/local/include/libgem.h
 	ln -s `pwd`/libgem.so /usr/local/lib
 	ln -s `pwd`/libgem.h /usr/local/include
 	ldconfig

@@ -45,7 +45,7 @@ int main(int argc,char **argv) {
     printf("error reading file\n");
     return -1;
   }
-  result=ufit(ds,convcrit,scalecrit,o,gws);
+  result=ufit(ds,convcrit,scalecrit,0,gws);
   printf("removing degenerated objects\n");
   print_ufit_tree(result);
 
