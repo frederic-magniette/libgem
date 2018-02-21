@@ -61,38 +61,34 @@ void dump_boxed_spiral(struct spiral *s,char *filename,struct point *point_min,s
   double long_distance;
   struct vector *v;
   struct vector *norm_sup;
+  struct dataset *ds;
 
   //build a reference line of points
-  struct point **points=boxed_line(s->support,point_min,point_max,nb_steps);
+  ds=boxed_line(s->support,point_min,point_max,nb_steps);
   FILE *f=fopen(filename,"w");
   norm_sup=cp_vector(s->support->dir_vect);
   normalize_vector(norm_sup);
   //add the radius*angle to points
-  for(i=0;i<nb_steps;i++) {
-    if (points[i]!=NULL) {
+  for(i=0;i<ds->nb_points;i++) {
       //printf("point %d\n",i);
-      v=vector_by2points(points[i],s->support->ref);
+    v=vector_by2points(ds->points[i],s->support->ref);
       long_distance=coef_project_vector(v,norm_sup);
       free_vector(v);
       angle=fmod(s->angular_offset+s->angular_speed*long_distance,360);
       v=col_vector_matrix(s->proj_base,1);
       mult_lambda_vect(v,s->radius*cos(deg2rad(angle)));
-      add_vector_point(points[i],v);
+      add_vector_point(ds->points[i],v);
       free_vector(v);
       v=col_vector_matrix(s->proj_base,2);
       mult_lambda_vect(v,s->radius*sin(deg2rad(angle)));
-      add_vector_point(points[i],v);
+      add_vector_point(ds->points[i],v);
 
       free_vector(v);
-      dump_point(points[i],f);
-      //printf("for point %d dist to support=%f\n",i,dist_line_point(s->support,points[i]));
-    }
+      dump_point(ds->points[i],f);
+      //printf("for point %d dist to support=%f\n",i,dist_line_point(s->support,ds->points[i]));
   }
   free_vector(norm_sup);
-  for(i=0;i<nb_steps;i++)
-    if (points[i]!=NULL)
-      free_point(points[i]);
-  free(points);
+  free_dataset(ds);
   fclose(f);
 }
 

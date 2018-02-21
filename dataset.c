@@ -300,7 +300,7 @@ void add_line_dataset(struct dataset *ds,struct line *l,int nb_steps,double leng
   int i;
   double tmp;
   struct vector *norm_dir=cp_vector(l->dir_vect);
-  struct point **points;
+  struct dataset *np;
   struct point *point_min=cp_point(l->ref);
   struct point *point_max=cp_point(l->ref);
 
@@ -318,14 +318,12 @@ void add_line_dataset(struct dataset *ds,struct line *l,int nb_steps,double leng
       
   }
 
-  points=boxed_line(l,point_min,point_max,nb_steps);
+  np=boxed_line(l,point_min,point_max,nb_steps);
 
-  for(i=0;i<nb_steps;i++) {
-    if (points[i]!=NULL) {
-      add_point_dataset(ds,points[i]);
-    }
+  for(i=0;i<np->nb_points;i++) {
+    add_point_dataset(ds,np->points[i]);
   }
-  free(points);
+  free_dataset(np);
   free_point(point_min);
   free_point(point_max);
   free_vector(norm_dir);
