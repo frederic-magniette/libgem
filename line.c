@@ -175,20 +175,14 @@ int best_axis_line(struct line *l) {
   return result;
 }
 
-struct point **boxed_line(struct line *l,struct point *point_min,struct point *point_max,int nb_steps) {
+struct dataset *boxed_line(struct line *l,struct point *point_min,struct point *point_max,int nb_steps) {
   int j,k;
   double ref;
   double refmin;
   double refmax;
   struct point *p;
   int best_axis;
-  struct point **result;
-
-  //allocate and initialize result
-  result=malloc(nb_steps*sizeof(struct point *));
-  for(j=0;j<nb_steps;j++) {
-    result[j]=NULL;
-  }
+  struct dataset *result=new_empty_boxed_dataset(l->dim,point_max,point_min);
 
   //select output axis
   best_axis=best_axis_line(l);
@@ -202,10 +196,9 @@ struct point **boxed_line(struct line *l,struct point *point_min,struct point *p
     p=get_coord_line(l,ref,best_axis);
 
     if (is_valid_point(p,point_min,point_max)) {
-      result[j]=p;
+      add_point_dataset(result,p);
       j++;
     } else {
-      result[j]=NULL;
       free_point(p);
     }
     ref+=(refmax-refmin)/(nb_steps-1);
@@ -214,20 +207,9 @@ struct point **boxed_line(struct line *l,struct point *point_min,struct point *p
 }
 
 void dump_boxed_line(struct line *l,char *filename,struct point *point_min,struct point *point_max,int nb_steps) {
-  int i,j;
-  struct point **points=boxed_line(l,point_min,point_max,nb_steps);
-  FILE *f=fopen(filename,"w");
-  for(i=0;i<nb_steps;i++) {
-    if (points[i]!=NULL) {
-      for(j=0;j<l->dim;j++) {
-        fprintf(f,"%lf ",points[i]->coords[j]);
-      }
-      fprintf(f,"\n");
-      free_point(points[i]);
-    }
-  }
-  free(points);
-  fclose(f);
+  struct dataset *ds=boxed_line(l,point_min,point_max,nb_steps);
+  dump_dataset(ds,filename);
+  free_dataset(ds);
 }
 
 void dump_line(struct line *l,FILE *f) {
@@ -245,17 +227,14 @@ void plot_line(struct line *l,int id,struct graphics *gws) {
   char name[1024];
   char title[1024];
   int i;
-  struct point **points;
+  struct dataset *ds;
   if (l->dim==2) {
     if (gws->sp) {
-      points=boxed_line(l,gws->sp->point_min,gws->sp->point_max,gws->sp->w);
-      for(i=0;i<gws->sp->w;i++) {
-        if (points[i]!=NULL) {
-          plot_point(points[i],id,gws);
-          free_point(points[i]);
-        }
+      ds=boxed_line(l,gws->sp->point_min,gws->sp->point_max,gws->sp->w);
+      for(i=0;i<ds->nb_points;i++) {
+	plot_point(ds->points[i],id,gws);
       }
-      free(points);
+      free_dataset(ds);
     }
   }
   if (l->dim==3) {

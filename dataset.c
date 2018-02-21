@@ -49,6 +49,16 @@ struct dataset * new_empty_dataset(int dim) {
   return ds;
 }
 
+struct dataset * new_empty_boxed_dataset(int dim,struct point *point_min,struct point *point_max) {
+  struct dataset *ds=malloc(sizeof(struct dataset));
+  ds->nb_points=0;
+  ds->points=NULL;
+  ds->dim=dim;
+  ds->point_min=cp_point(point_min);
+  ds->point_max=cp_point(point_max);
+  return ds;
+}
+
 struct dataset * new_dataset_fromfile(int dim,char *filename) {
   FILE *f;
   struct dataset *ds;
