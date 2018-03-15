@@ -37,12 +37,12 @@ int main(int argc,char **argv) {
       //printf("\nscalecrit=%d angle=%d\n",scalecrit,angle_iter);
       
       //generate data
-      system("data/angle_line.exe 2 10 l1.txt 0 -100 -100 100 100");
-      sprintf(cmd,"data/noise.exe l1.txt 2 %f n1.txt",noise_level);
+      system("../data/angle_line.exe 2 10 l1.txt 0 -100 -100 100 100");
+      sprintf(cmd,"../data/noise.exe l1.txt 2 %f n1.txt",noise_level);
       system(cmd);
-      sprintf(cmd,"data/angle_line.exe 2 10 l2.txt %d -100 -100 100 100",angle_iter);
+      sprintf(cmd,"../data/angle_line.exe 2 10 l2.txt %d -100 -100 100 100",angle_iter);
       system(cmd);
-      sprintf(cmd,"data/noise.exe l2.txt 2 %f n2.txt",noise_level);
+      sprintf(cmd,"../data/noise.exe l2.txt 2 %f n2.txt",noise_level);
       system(cmd);
       system("cat n1.txt n2.txt > test.txt");
       
