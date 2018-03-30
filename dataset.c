@@ -335,8 +335,8 @@ void add_angle_line_dataset(struct dataset *ds,int angle,int nb_steps,double x,d
   free_line(angline);
 }
 
-void add_random_line_dataset(struct dataset *ds,int nb_steps,double length) {
-  struct line *rline=random_line(ds->dim,ds->point_min,ds->point_max);
+void add_random_line_dataset(struct dataset *ds,int nb_steps,double length,struct point *pmin,struct point *pmax) {
+  struct line *rline=random_line(ds->dim,pmin,pmax);
   add_line_dataset(ds,rline,nb_steps,length);
   free_line(rline);
 }
@@ -344,7 +344,7 @@ void add_random_line_dataset(struct dataset *ds,int nb_steps,double length) {
 void add_point_dataset(struct dataset *ds,struct point *p) {
   int newsize=ds->nb_points+1;
   ds->points=realloc(ds->points,newsize*sizeof(struct point *));
-  ds->points[ds->nb_points]=p;
+  ds->points[ds->nb_points]=cp_point(p);
   ds->nb_points=newsize;
   calc_max_point_dataset(ds);
   calc_min_point_dataset(ds);
@@ -361,6 +361,7 @@ void add_random_noise_dataset(struct dataset *ds,int nb_points) {
       p->coords[d]=ds->point_min->coords[d]+unif*(ds->point_max->coords[d]-ds->point_min->coords[d]);
     }
     add_point_dataset(ds,p);
+    free_point(p);
   }
 }
 

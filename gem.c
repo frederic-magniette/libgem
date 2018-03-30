@@ -108,13 +108,15 @@ int add_object_gem(struct gem_ws *ws,enum otype type,struct graphics *gws) {
     //affect the weight for all other objects
     for(l=0;l<newo_idx;l++) {
       ws->fit_weights[l]->coefs[wf]=pc_out/(float)newo_idx;
-      printf("removing point %d from object %d\n",wf,l);
+      if (gws)
+        printf("removing point %d from object %d\n",wf,l);
     }
     if (gws) {
       plot_point(ws->ds->points[wf],newo_idx+1,gws);
     }
 
-    printf("choosing with respect to scale/2=%f\n",ws->scale/2);
+    if (gws)
+      printf("choosing with respect to scale/2=%f\n",ws->scale/2);
     //printf("choosing with respect to distance to reference\n");
     //calculate the new weights
     for(p=0;p<wfn->size;p++) {
@@ -502,7 +504,7 @@ int algo_gem(struct gem_ws *ws,struct graphics *gws) {
       }
       for(o=0;o<nb_objects;o++) {
 	if (spk==0) {
-	  printf("equirepartition\n");
+	  //printf("equirepartition\n");
           ws->fit_weights[o]->coefs[p]=1.0/nb_objects;
         } else {
 	  ws->fit_weights[o]->coefs[p]=pk[o]*bprobas[p][o]/spk;

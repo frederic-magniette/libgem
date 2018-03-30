@@ -89,7 +89,7 @@ void noise_dataset(struct dataset *ds,double dispersion);
 void add_point_dataset(struct dataset *ds,struct point *p);
 void add_line_dataset(struct dataset *ds,struct line *l,int nb_steps,double length);
 void add_angle_line_dataset(struct dataset *ds,int angle,int nb_steps,double x,double y,double length);
-void add_random_line_dataset(struct dataset *ds,int nb_steps,double length);
+void add_random_line_dataset(struct dataset *ds,int nb_steps,double length,struct point *pmin,struct point *pmax);
 void add_random_noise_dataset(struct dataset *ds,int nb_points);
 struct dataset *ortho_projection_dataset(struct dataset *ds,struct matrix *base,struct vector *dir,struct point *ref,double *long_dist);
 

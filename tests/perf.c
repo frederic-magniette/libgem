@@ -41,6 +41,8 @@ int main(int argc,char **argv) {
   int seed;
   char fname[4096];
   struct distrib *convtime=new_distrib(WGAUSS);
+  struct point *pmin=new_2D_point(-10,-10);
+  struct point *pmax=new_2D_point(10,10);
   
   if (argc!=3) {
     printf("usage : %s seed convcrit\n",argv[0]);
@@ -70,7 +72,7 @@ int main(int argc,char **argv) {
         //create dataset
         ds=new_empty_dataset(2);
         for(j=0;j<nb_lines;j++)
-          add_random_line_dataset(ds,10,size);
+          add_random_line_dataset(ds,10,size,pmax,pmin);
         noise_dataset(ds,noise_level);
         
         //exec the multifit

@@ -198,9 +198,8 @@ struct dataset *boxed_line(struct line *l,struct point *point_min,struct point *
     if (is_valid_point(p,point_min,point_max)) {
       add_point_dataset(result,p);
       j++;
-    } else {
-      free_point(p);
-    }
+    } 
+    free_point(p);
     ref+=(refmax-refmin)/(nb_steps-1);
   }
   return result;
