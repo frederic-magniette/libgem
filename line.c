@@ -258,6 +258,10 @@ struct line *angle_line(int angle,double x,double y) {
   return angline;
 }
 
+float angle_between_line(struct line *l1,struct line *l2) {
+  return fmod(angle_between_2_vector(l1->dir_vect,l2->dir_vect)+180.0,180.0);
+}
+
 struct line *random_line(int dim,struct point *pmin,struct point *pmax) {
   struct point *ref;
   struct vector *direct;

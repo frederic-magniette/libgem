@@ -208,6 +208,7 @@ struct point *get_coord_line(struct line *l,double val,int axis);
 void plot_line(struct line *l,int id,struct graphics *gws);
 struct line *angle_line(int angle,double x,double y);
 struct line *random_line(int dim,struct point *pmin,struct point *pmax);
+float angle_between_line(struct line *l1,struct line *l2);
 
 //circles
 
