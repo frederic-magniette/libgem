@@ -28,63 +28,75 @@ int main(int argc,char **argv) {
   double convcrit;
   double noise_level;
   int size;
-  FILE *f;
+  FILE *fc;
+  FILE *fcp;
+  FILE *fcpd;
   int i,j,k;
   int nb_lines;
   int nb_iter;
-  int seed;
   double scalecrit;
-  double pc;
   struct point *pmin;
   struct point *pmax;
-  //struct point *gmin;
-  //struct point *gmax;
-  float uerr;
-  float serr;
-  //struct graphics *gws;
   int stop;
   float abl;
   float angres;
 
+  //graphical debug environment
+  #ifdef DEBUG
+  struct graphics *gws;
+  struct point *gmin;
+  struct point *gmax;
+#endif
+
+  
   //error histograms
   #define NB_BINS 8
-  int histo[NB_BINS];
+  #define MAX_SIZE NB_BINS+5
+  int histo_wc[NB_BINS][MAX_SIZE];
+  int histo_wcp[NB_BINS][MAX_SIZE];
+  int histo_wcpd[NB_BINS][MAX_SIZE];
   struct line *targets[NB_BINS];
-  
-  if (argc!=3) {
-    printf("usage : %s seed convcrit\n",argv[0]);
-    return -1;
-  }
 
   
   //parameters
-  seed=atoi(argv[1]);
-  convcrit=atof(argv[2]);
-  srand(seed);
+  convcrit=0.00001;
   noise_level=0.1;
   size=80;
   scalecrit=150;
-  nb_iter=5000;
+  nb_iter=2000;
   pmin=new_2D_point(-50,-50);
   pmax=new_2D_point(50,50);
-  //gmin=new_2D_point(-200,-200);
-  //gmax=new_2D_point(200,200);
-  //gws=new_graphics(2,1000,1000,gmin,gmax,param2verb("summary"));
-  f=fopen("/tmp/perf_algo_wd.txt","w");
-  uerr=0.0;
   angres=7.0;
 
-  //initialize error histogram
+  //initialize random generator
+  srand(0);
+  
+  //initialize graphical debug environment
+#ifdef DEBUG
+  gmin=new_2D_point(-200,-200);
+  gmax=new_2D_point(200,200);
+  gws=new_graphics(2,1000,1000,gmin,gmax,param2verb("summary"));
+#endif
+  
+  //initialize error histograms
   for(nb_lines=1;nb_lines<=NB_BINS;nb_lines++)
-    histo[nb_lines-1]=0;
+    for(i=0;i<=MAX_SIZE;i++) {
+      histo_wc[nb_lines-1][i]=0;
+      histo_wcp[nb_lines-1][i]=0;
+      histo_wcpd[nb_lines-1][i]=0;
+    }
 
-    
+  //open the files
+  fc=fopen("/tmp/perf_algo_wc.txt","w");
+  fcp=fopen("/tmp/perf_algo_wcp.txt","w");
+  fcpd=fopen("/tmp/perf_algo_wcpd.txt","w");
+  
+  //iterate on mixtures
   for(nb_lines=1;nb_lines<=NB_BINS;nb_lines++) {
-    printf("nb_lines=%d\n",nb_lines);
     for(i=0;i<nb_iter;i++) {
-      printf("iter %d\n",i);
+      printf("nb_lines %d iter %d\n",nb_lines,i);
       
-      //create dataset
+      //create dataset : nb_lines without colinearity at more that angres
       ds=new_empty_dataset(2);
       for(j=0;j<nb_lines;j++) {
         do {
@@ -93,7 +105,7 @@ int main(int argc,char **argv) {
           for(k=0;k<j;k++) {
             abl=angle_between_line(targets[k],targets[j]);
             if ((abl<angres) || (abl>180-angres)) {
-              printf("abl=%f\n",abl);
+              //printf("abl=%f\n",abl);
               stop=0;
             }
           }
@@ -106,19 +118,39 @@ int main(int argc,char **argv) {
       
       //exec the multifit
       result=multifit(ds,convcrit,scalecrit,0,0,NULL);
+
+      //fill histogram
+      if (result->nb_objects>MAX_SIZE)
+	histo_wc[nb_lines-1][MAX_SIZE]++;
+      else
+	histo_wc[nb_lines-1][result->nb_objects]++;
+
+      //apply degenerated objects post-processing
       remove_degenerated_objects_gem(result,3);
+
+      //fill histogram
+      if (result->nb_objects>MAX_SIZE)
+	histo_wcp[nb_lines-1][MAX_SIZE]++;
+      else
+	histo_wcp[nb_lines-1][result->nb_objects]++;
+
+      //apply duplicated objects post-processing
       remove_dup_objects_gem(result,0.1);
-      
-      //check for error
+
+      //fill histogram
+      if (result->nb_objects>MAX_SIZE)
+	histo_wcpd[nb_lines-1][MAX_SIZE]++;
+      else
+	histo_wcpd[nb_lines-1][result->nb_objects]++;
+
+
+      //print if debug
+#ifdef DEBUG
       if (result->nb_objects!=nb_lines) {
-        printf("waiting for %d, getting %d\n",nb_lines,result->nb_objects);
-        for(j=0;j<nb_lines;j++) 
-          for(k=0;k<j;k++)
-            printf("angle between line %d and line %d : %f\n",j,k,angle_between_line(targets[k],targets[j]));
-        histo[nb_lines-1]++;
-        //plot_gem(result,gws);
-        //getchar();
+        plot_gem(result,gws);
+        getchar();
       }
+#endif
       
       //free data
       free_gem(result);
@@ -128,16 +160,23 @@ int main(int argc,char **argv) {
       }
     }
 
-    pc=(float)histo[nb_lines-1]/(float)nb_iter*100.0;
-    if (nb_lines==2)
-      uerr=pc;
-    serr=uerr*((float)nb_lines)*((float)nb_lines-1)/2.0;
-    fprintf(f,"%d %d %f %f %f\n",nb_lines,histo[nb_lines-1],pc,serr,pc-serr);
-    printf("%d %d %f %f %f\n",nb_lines,histo[nb_lines-1],pc,serr,pc-serr);
-
+    //dump result in files
+    fprintf(fc,"%d ",nb_lines);
+    fprintf(fcp,"%d ",nb_lines);
+    fprintf(fcpd,"%d ",nb_lines);
+    for(i=0;i<=MAX_SIZE;i++) {
+      fprintf(fc,"%f ",(float)histo_wc[nb_lines-1][i]/(float)nb_iter*100.0);
+      fprintf(fcp,"%f ",(float)histo_wcp[nb_lines-1][i]/(float)nb_iter*100.0);
+      fprintf(fcpd,"%f ",(float)histo_wcpd[nb_lines-1][i]/(float)nb_iter*100.0);
+    }
+    fprintf(fc,"%f\n",100.0-(float)histo_wc[nb_lines-1][nb_lines]/(float)nb_iter*100.0);
+    fprintf(fcp,"%f\n",100.0-(float)histo_wcp[nb_lines-1][nb_lines]/(float)nb_iter*100.0);
+    fprintf(fcpd,"%f\n",100.0-(float)histo_wcpd[nb_lines-1][nb_lines]/(float)nb_iter*100.0);
   }
  
-  fclose(f);
+  fclose(fc);
+  fclose(fcp);
+  fclose(fcpd);
   return 1;
 }
 

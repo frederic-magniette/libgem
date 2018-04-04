@@ -37,11 +37,11 @@ int main(int argc,char **argv) {
   double pc;
   struct point *pmin;
   struct point *pmax;
-  struct point *gmin;
-  struct point *gmax;
   float uerr;
   float serr;
-  struct graphics *gws;
+  //struct graphics *gws;
+  //struct point *gmin;
+  //struct point *gmax;
 
   //error histograms
   #define NB_BINS 8
@@ -63,8 +63,8 @@ int main(int argc,char **argv) {
   nb_iter=5000;
   pmin=new_2D_point(-50,-50);
   pmax=new_2D_point(50,50);
-  gmin=new_2D_point(-200,-200);
-  gmax=new_2D_point(200,200);
+  //gmin=new_2D_point(-200,-200);
+  //gmax=new_2D_point(200,200);
   //gws=new_graphics(2,1000,1000,gmin,gmax,param2verb("summary"));
   f=fopen("/tmp/perf_algo.txt","w");
   uerr=0.0;
